@@ -113,6 +113,15 @@ class RAGSystem:
     ) -> List[Dict[str, object]]:
         if not candidates:
             return []
+        # 轻量模式：不下载 CrossEncoder，直接用向量召回距离排序。
+        if self.settings.reranker_model.strip().lower() in {"none", "off", ""}:
+            scored = [
+                {**c, "score": -float(c.get("distance") or 0)}
+                for c in candidates
+            ]
+            scored.sort(key=lambda x: x["score"], reverse=True)
+            return scored[: top_k or self.settings.top_k_rerank]
+
         scores = self.rerank_model.predict(
             [(query, str(c["text"])) for c in candidates]
         )

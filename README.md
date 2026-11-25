@@ -81,6 +81,18 @@ python main.py serve
 
 切换为强制模式：`LLM_BACKEND=extractive`（或 `gemini` / `openai` / `ollama`）。
 
+### 轻量模式（下载量从 ~880 MB 降到 ~100 MB）
+
+如果想先跑通流程、暂不下载视频中的两个大模型，在 `.env` 中设置：
+
+```env
+EMBEDDING_MODEL=BAAI/bge-small-zh-v1.5
+RERANKER_MODEL=none
+LLM_BACKEND=extractive
+```
+
+此时重排退化为「用向量相似度排序」，其余分片/索引/召回/证据生成流程不变；确认可用后再改回默认值即可使用视频同款模型。
+
 ## 换成自己的知识库
 
 把文档放到 `data/` 下，然后：
